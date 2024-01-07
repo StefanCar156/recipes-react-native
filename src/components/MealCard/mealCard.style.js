@@ -24,6 +24,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
+  favoriteButton: {
+    position: "absolute",
+    right: 0,
+    top: 0,
+    backgroundColor: "#fff",
+    padding: 8,
+    borderTopRightRadius: 8,
+    borderBottomLeftRadius: 8,
+  },
 })
 
 export default styles

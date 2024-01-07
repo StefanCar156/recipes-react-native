@@ -46,6 +46,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 8,
   },
+  favoriteButton: {
+    backgroundColor: "#eda71c",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 15,
+  },
+  favoriteButtonText: {
+    color: "#fff",
+    textAlign: "center",
+  },
 })
 
 export default styles

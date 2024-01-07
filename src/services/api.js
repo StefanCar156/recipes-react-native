@@ -1,4 +1,5 @@
 import axios from "axios"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 const api = axios.create({
   baseURL: "https://www.themealdb.com/api/json/v1/1",
@@ -70,6 +71,45 @@ export const getMealsByCategory = async (category) => {
     return response.data.meals || []
   } catch (error) {
     console.error("Error fetching meals by category:", error)
+    throw error
+  }
+}
+
+export const fetchFavorites = async () => {
+  try {
+    const storedFavorites = await AsyncStorage.getItem("favorites")
+
+    if (storedFavorites) {
+      const parsedFavorites = JSON.parse(storedFavorites)
+
+      const favoritesWithDetails = await Promise.all(
+        parsedFavorites.map(async (mealId) => await getMealById(mealId))
+      )
+      return favoritesWithDetails
+    }
+    return []
+  } catch (error) {
+    console.error("Error fetching favorites:", error)
+    throw error
+  }
+}
+
+export const toggleMealInFavorites = async (mealId) => {
+  try {
+    let favoritesRes = await AsyncStorage.getItem("favorites")
+    let favorites = JSON.parse(favoritesRes) || []
+
+    const isFavorite = favorites.includes(mealId)
+
+    if (isFavorite) {
+      const updatedFavorites = favorites.filter((id) => id !== mealId)
+      await AsyncStorage.setItem("favorites", JSON.stringify(updatedFavorites))
+    } else {
+      const updatedFavorites = [...favorites, mealId]
+      await AsyncStorage.setItem("favorites", JSON.stringify(updatedFavorites))
+    }
+  } catch (error) {
+    console.error("Error toggling meal in favorites:", error)
     throw error
   }
 }

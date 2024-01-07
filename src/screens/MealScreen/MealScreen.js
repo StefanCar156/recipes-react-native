@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react"
-import { View, Text, Image, FlatList, ActivityIndicator } from "react-native"
+import {
+  View,
+  Text,
+  Image,
+  FlatList,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native"
 import { useRoute } from "@react-navigation/native"
-import { getMealById } from "../../services/api"
+import { getMealById, toggleMealInFavorites } from "../../services/api"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 import styles from "./mealScreen.style"
 
@@ -9,6 +17,7 @@ const MealScreen = () => {
   const route = useRoute()
   const [meal, setMeal] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isFavorite, setIsFavorite] = useState(false)
 
   useEffect(() => {
     const fetchMealDetails = async () => {
@@ -25,6 +34,30 @@ const MealScreen = () => {
 
     fetchMealDetails()
   }, [route.params.mealId])
+
+  useEffect(() => {
+    const checkIfFavorite = async () => {
+      try {
+        const favoritesIDs = await AsyncStorage.getItem("favorites")
+        const isMealFavorite =
+          favoritesIDs && favoritesIDs.includes(meal.idMeal)
+        setIsFavorite(isMealFavorite)
+      } catch (error) {
+        console.error("Error checking if meal is a favorite:", error)
+      }
+    }
+
+    if (meal) checkIfFavorite()
+  }, [meal])
+
+  const toggleFavorite = async () => {
+    try {
+      await toggleMealInFavorites(meal.idMeal)
+      setIsFavorite((prev) => !prev)
+    } catch (error) {
+      console.error("Error toggling favorite:", error)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -69,6 +102,14 @@ const MealScreen = () => {
           <>
             <Text style={styles.sectionTitle}>Instructions:</Text>
             <Text style={styles.instructions}>{meal.strInstructions}</Text>
+            <TouchableOpacity
+              onPress={toggleFavorite}
+              style={styles.favoriteButton}
+            >
+              <Text style={styles.favoriteButtonText}>
+                {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+              </Text>
+            </TouchableOpacity>
           </>
         }
       />

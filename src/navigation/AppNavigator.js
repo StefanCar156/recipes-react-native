@@ -5,6 +5,7 @@ import { createStackNavigator } from "@react-navigation/stack"
 import HomeScreen from "../screens/HomeScreen/HomeScreen"
 import MealScreen from "../screens/MealScreen/MealScreen"
 import SearchResultsScreen from "../screens/SearchResultsScreen/SearchResultsScreen"
+import FavoritesScreen from "../screens/FavoritesScreen/FavoritesScreen"
 
 const Stack = createStackNavigator()
 
@@ -19,6 +20,11 @@ const AppNavigator = () => {
           component={MealScreen}
         />
         <Stack.Screen name="SearchResults" component={SearchResultsScreen} />
+        <Stack.Screen
+          name="Favorites"
+          options={{ headerTitle: "Favorite Meals" }}
+          component={FavoritesScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   )
